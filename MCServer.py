@@ -5,7 +5,7 @@ import requests
 import sys
 import urllib.parse
 
-VERBOSE = False
+VERBOSE = True
 
 config = {
   "server_software": "fabric",
@@ -43,7 +43,7 @@ def search_mod(query):
     "User-Agent": config["modrinth_user_agent"]
   }).text)
 
-  logger("debug", f"Got response: \n{json.dumps(response_json)}")
+  logger("debug", f"Got response: \n{json.dumps(response_json, indent=2)}")
   
   if len(response_json["hits"]) < 1:
     logger("error", "No mod found.")
