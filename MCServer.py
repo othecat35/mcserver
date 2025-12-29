@@ -10,18 +10,21 @@ config = {
   "hide_server_gui": True
 }
 
+def logger(log_level, message):
+  print(f"[{log_level.upper()}]: {message}")
+
 def start_server():
   server_command_args = [
     "java",
     f"-Xms{config['server_min_ram']}",
     f"-Xmx{config['server_max_ram']}",
-    "-jar", config['serverjar_name']
+    "-jar", config["serverjar_name"]
   ]
 
   if config["hide_server_gui"]:
     server_command_args.append("nogui")
 
-  print("[INFO]: Starting the server...")
+  logger("info", "Starting the server...")
   os.execvp("java", server_command_args)
 
 def main():
@@ -31,7 +34,7 @@ def main():
     case "start":
       start_server()
     case _:
-      print(f"[ERROR]: Unknown command: {command}")
+      logger("error", f"Unknown command: {command}")
 
 if __name__ == "__main__":
   main()
