@@ -5,7 +5,7 @@ import requests
 import sys
 import urllib.parse
 
-VERBOSE = True
+VERBOSE = False
 
 config = {
   "server_software": "fabric",
