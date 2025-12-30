@@ -39,6 +39,42 @@ def logger(log_level, message):
 
   print(f"[{log_level.upper()}]: {message}")
 
+def getEnvironment(mod):
+  # 0 = Client-only
+  # 1 = Client (optional for server)
+  # 2 = Both
+  # 3 = Server (optional for client)
+  # 4 = Server-only
+  # 5 = Independent
+  # 6 = Man idk
+
+  server_side = mod["server_side"]
+  client_sideb= mod["client_side"]
+
+  if server_side == "required":
+    if client_side == "required":
+      return 2
+    elif client_side == "optional":
+      return 3
+    else:
+      return 4
+  elif server_side == "optional"
+   if client_side == "required":
+      return 1
+    elif client_side == "optional":
+      return 5
+    else:
+      return 3
+  else:
+    if client_side == "required":
+      return 0
+    elif client_side == "optional":
+      return 1
+    else:
+      return 6
+
+
+
 def search_mod(query):
   search_filters = f"[[\"project_type:mod\"],\
 [\"server_side:required\"],\
@@ -84,6 +120,7 @@ def start_server():
 
 def main():
   script_args = sys.argv[1:] if len(sys.argv) > 1 else [""]
+
   command = script_args[0]
   command_args = " ".join(script_args[1:]) if len(script_args) > 1 else ""
 
@@ -92,6 +129,9 @@ def main():
       search_mod(command_args)
     case "start":
       start_server()
+    case _:
+        logger("error", f"Not a valid command {command}")
+        sys.exit(1)
 
 if __name__ == "__main__":
   main()
