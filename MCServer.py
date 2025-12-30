@@ -20,6 +20,18 @@ config = {
   "modrinth_api_url": "https://api.modrinth.com/v2/"
 }
 
+colors = {
+  "gray": "\033[90m",
+  "green": "\033[32m",
+  "red": "\033[31m",
+  "reset": "\033[0m",
+  "yellow": "\033[33m"
+}
+
+def color(color_name):
+  if sys.stdout.isatty:
+    return f"{colors[color_name]}"
+
 def logger(log_level, message):
   log_level = log_level.lower()
   if log_level == "debug" and not VERBOSE:
@@ -34,7 +46,7 @@ def search_mod(query):
 [\"versions:{config['server_version']}\"]]"
 
   url = urllib.parse.urljoin(config["modrinth_api_url"], f"search\
-?limit=1\
+?limit=20\
 &facets={search_filters}\
 &query={query}")
 
@@ -44,17 +56,17 @@ def search_mod(query):
   }).text)
 
   logger("debug", f"Got response: \n{json.dumps(response_json, indent=2)}")
-  
   if len(response_json["hits"]) < 1:
     logger("error", "No mod found.")
     sys.exit(1)
 
-  mod = response_json["hits"][0]
+  mods_list = response_json["hits"]
 
-  print(f"""\
-Name        : {mod['title']}
-Creator     : {mod['author']}
-Description : {mod['description']}""")
+  for mod in mods_list:
+    print(f"""\
+{color("green")}{mod["slug"]}{color("reset")}/modrinth
+  {mod["description"]}
+""")
 
 def start_server():
   server_command_args = [
@@ -71,17 +83,15 @@ def start_server():
   os.execvp("java", server_command_args)
 
 def main():
-  command = sys.argv[1] if len(sys.argv) > 1 else "start"
-  command_args = sys.argv[2] if len(sys.argv) > 2 else ""
+  script_args = sys.argv[1:] if len(sys.argv) > 1 else [""]
+  command = script_args[0]
+  command_args = " ".join(script_args[1:]) if len(script_args) > 1 else ""
 
   match command:
     case "search":
-      logger("info", "Searching mod in Modrinth...")
       search_mod(command_args)
     case "start":
       start_server()
-    case _:
-      logger("error", f"Unknown command: {command}")
 
 if __name__ == "__main__":
   main()
