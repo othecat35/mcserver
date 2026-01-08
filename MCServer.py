@@ -42,7 +42,11 @@ def logger(log_level, message):
   print(f"[{log_level.upper()}]: {message}")
 
 def init():
-  pass
+  logger("info", f"Initializing setup...")
+  try:
+    os.mkdir(script_name)
+  except Exception as error:
+    logger("error", f"Cannot create directory \"{script_name}\": {error}")
 
 def load_config(section):
   config_file_path = os.path.join(script_name, "config.json")
@@ -53,8 +57,6 @@ def load_config(section):
       return config_json
   except:
     pass
-
-print(load_config("server"))
 
 def search_mod(query):
   search_filters = f"[[\"project_type:mod\"],\
@@ -106,7 +108,7 @@ def main():
   command_args = " ".join(script_args[1:]) if len(script_args) > 1 else ""
 
   if not os.path.isdir(script_name):
-    logger("error", f"{script_name} folder does not exist!")
+    logger("error", f"{script_name} director does not exist!")
     init()
 
   match command:
