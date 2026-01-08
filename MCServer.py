@@ -58,8 +58,8 @@ def getEnvironment(mod):
       return 3
     else:
       return 4
-  elif server_side == "optional"
-   if client_side == "required":
+  elif server_side == "optional":
+    if client_side == "required":
       return 1
     elif client_side == "optional":
       return 5
@@ -73,11 +73,9 @@ def getEnvironment(mod):
     else:
       return 6
 
-
-
 def search_mod(query):
   search_filters = f"[[\"project_type:mod\"],\
-[\"server_side:required\"],\
+[\"server_side:optional\"],\
 [\"categories:{config['server_software']}\"],\
 [\"versions:{config['server_version']}\"]]"
 
