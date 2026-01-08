@@ -7,6 +7,8 @@ import urllib.parse
 
 VERBOSE = False
 
+script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+
 config = {
   "server_software": "fabric",
   "server_version": "1.16.5",
@@ -39,39 +41,20 @@ def logger(log_level, message):
 
   print(f"[{log_level.upper()}]: {message}")
 
-def getEnvironment(mod):
-  # 0 = Client-only
-  # 1 = Client (optional for server)
-  # 2 = Both
-  # 3 = Server (optional for client)
-  # 4 = Server-only
-  # 5 = Independent
-  # 6 = Man idk
+def init():
+  pass
 
-  server_side = mod["server_side"]
-  client_sideb= mod["client_side"]
+def load_config(section):
+  config_file_path = os.path.join(script_name, "config.json")
 
-  if server_side == "required":
-    if client_side == "required":
-      return 2
-    elif client_side == "optional":
-      return 3
-    else:
-      return 4
-  elif server_side == "optional":
-    if client_side == "required":
-      return 1
-    elif client_side == "optional":
-      return 5
-    else:
-      return 3
-  else:
-    if client_side == "required":
-      return 0
-    elif client_side == "optional":
-      return 1
-    else:
-      return 6
+  try:
+    with open(config_file_path) as config_file:
+      config_json = json.load(config_file)[section]
+      return config_json
+  except:
+    pass
+
+print(load_config("server"))
 
 def search_mod(query):
   search_filters = f"[[\"project_type:mod\"],\
@@ -121,6 +104,10 @@ def main():
 
   command = script_args[0]
   command_args = " ".join(script_args[1:]) if len(script_args) > 1 else ""
+
+  if not os.path.isdir(script_name):
+    logger("error", f"{script_name} folder does not exist!")
+    init()
 
   match command:
     case "search":
